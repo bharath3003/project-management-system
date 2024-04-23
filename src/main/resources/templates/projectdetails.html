@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Start Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">User Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <th:block th:if="${user==null}">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="signin">Login</a></li>
+                    </th:block>
+                    <th:block th:if="${user!=null}">
+                        <li class="nav-item"><a class="nav-link" href="/user/profile">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projectdetails">Project Details</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/inbox">Inbox</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+    <!-- Projects Section -->
+    <section class="container mt-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title text-center">Projects</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+                        <label for="projectNameInput" class="form-label">Enter Project Name:</label>
+                        <input type="text" class="form-control" id="projectNameInput" placeholder="Enter project name">
+                        <button class="btn btn-primary mt-2" onclick="fetchProjectDetails()">Search Project</button>
+                    </div>
+                </div>
+                <div id="projectDetails" class="row"></div> <!-- Project details will be displayed here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript for fetching and displaying project details -->
+    <script>
+        var projectsData = [
+            { projectName: 'ML Project 1', domain: 'MACHINE_LEARNING', difficultyLevel: 'EASY' },
+            { projectName: 'ML Project 2', domain: 'MACHINE_LEARNING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'ML Project 3', domain: 'MACHINE_LEARNING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'ML Project 4', domain: 'MACHINE_LEARNING', difficultyLevel: 'HARD' },
+            { projectName: 'ML Project 5', domain: 'MACHINE_LEARNING', difficultyLevel: 'HARD' },
+
+            { projectName: 'Security Project 1', domain: 'CYBERSECURITY', difficultyLevel: 'EASY' },
+            { projectName: 'Security Project 2', domain: 'CYBERSECURITY', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Security Project 3', domain: 'CYBERSECURITY', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Security Project 4', domain: 'CYBERSECURITY', difficultyLevel: 'HARD' },
+            { projectName: 'Security Project 5', domain: 'CYBERSECURITY', difficultyLevel: 'HARD' },
+
+            { projectName: 'Cloud Project 1', domain: 'CLOUD_COMPUTING', difficultyLevel: 'EASY' },
+            { projectName: 'Cloud Project 2', domain: 'CLOUD_COMPUTING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Cloud Project 3', domain: 'CLOUD_COMPUTING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Cloud Project 4', domain: 'CLOUD_COMPUTING', difficultyLevel: 'HARD' },
+            { projectName: 'Cloud Project 5', domain: 'CLOUD_COMPUTING', difficultyLevel: 'HARD' },
+
+            { projectName: 'Blockchain Project 1', domain: 'BLOCKCHAIN', difficultyLevel: 'EASY' },
+            { projectName: 'Blockchain Project 2', domain: 'BLOCKCHAIN', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Blockchain Project 3', domain: 'BLOCKCHAIN', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Blockchain Project 4', domain: 'BLOCKCHAIN', difficultyLevel: 'HARD' },
+            { projectName: 'Blockchain Project 5', domain: 'BLOCKCHAIN', difficultyLevel: 'HARD' },
+
+            { projectName: 'IoT Project 1', domain: 'IOT', difficultyLevel: 'EASY' },
+            { projectName: 'IoT Project 2', domain: 'IOT', difficultyLevel: 'MEDIUM' },
+            { projectName: 'IoT Project 3', domain: 'IOT', difficultyLevel: 'MEDIUM' },
+            { projectName: 'IoT Project 4', domain: 'IOT', difficultyLevel: 'HARD' },
+            { projectName: 'IoT Project 5', domain: 'IOT', difficultyLevel: 'HARD' },
+
+            { projectName: 'Robotics Project 1', domain: 'ROBOTICS', difficultyLevel: 'EASY' },
+            { projectName: 'Robotics Project 2', domain: 'ROBOTICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Robotics Project 3', domain: 'ROBOTICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Robotics Project 4', domain: 'ROBOTICS', difficultyLevel: 'HARD' },
+            { projectName: 'Robotics Project 5', domain: 'ROBOTICS', difficultyLevel: 'HARD' },
+
+            { projectName: 'AI Project 1', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'EASY' },
+            { projectName: 'AI Project 2', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'AI Project 3', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'AI Project 4', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'HARD' },
+            { projectName: 'AI Project 5', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'HARD' },
+
+            { projectName: 'Data Science Project 1', domain: 'DATA_SCIENCE', difficultyLevel: 'EASY' },
+            { projectName: 'Data Science Project 2', domain: 'DATA_SCIENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Data Science Project 3', domain: 'DATA_SCIENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Data Science Project 4', domain: 'DATA_SCIENCE', difficultyLevel: 'HARD' },
+            { projectName: 'Data Science Project 5', domain: 'DATA_SCIENCE', difficultyLevel: 'HARD' },
+
+            { projectName: 'Computer Graphics Project 1', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'EASY' },
+            { projectName: 'Computer Graphics Project 2', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Computer Graphics Project 3', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Computer Graphics Project 4', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'HARD' },
+            { projectName: 'Computer Graphics Project 5', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'HARD' }
+        ];
+
+        var usersData = [
+            { id: 1, email: 'dishajain14.12.2002@gmail.com', mobile: '9731172074', name: 'Disha Jain', domain: 'MACHINE_LEARNING' },
+            { id: 2, email: 'user2@example.com', mobile: '9876543210', name: 'Bob Smith', domain: 'MACHINE_LEARNING' },
+            { id: 3, email: 'user3@example.com', mobile: '1357924680', name: 'Charlie Brown', domain: 'CYBERSECURITY' },
+            { id: 4, email: 'user4@example.com', mobile: '2468135790', name: 'David Miller', domain: 'CYBERSECURITY' },
+            { id: 5, email: 'user5@example.com', mobile: '3141592653', name: 'Emma Wilson', domain: 'CLOUD_COMPUTING' },
+            { id: 6, email: 'user6@example.com', mobile: '2718281828', name: 'Frank Thomas', domain: 'CLOUD_COMPUTING' },
+            { id: 7, email: 'user7@example.com', mobile: '1123581321', name: 'Grace White', domain: 'BLOCKCHAIN' },
+            { id: 8, email: 'user8@example.com', mobile: '9999999999', name: 'Henry Davis', domain: 'BLOCKCHAIN' },
+            { id: 9, email: 'darsh@gmail.com', mobile: '8888888888', name: 'Darsh Agarwal', domain: 'IOT' },
+            { id: 10, email: 'user10@example.com', mobile: '7777777777', name: 'Jack Wilson', domain: 'IOT' },
+            { id: 11, email: 'user11@example.com', mobile: '6666666666', name: 'Kate Brown', domain: 'ROBOTICS' },
+            { id: 12, email: 'user12@example.com', mobile: '5555555555', name: 'Liam Anderson', domain: 'ROBOTICS' },
+            { id: 13, email: 'user13@example.com', mobile: '4444444444', name: 'Mia Taylor', domain: 'ARTIFICIAL_INTELLIGENCE' },
+            { id: 14, email: 'user14@example.com', mobile: '3333333333', name: 'Noah Martinez', domain: 'ARTIFICIAL_INTELLIGENCE' },
+            { id: 15, email: 'user15@example.com', mobile: '2222222222', name: 'Olivia Brown', domain: 'DATA_SCIENCE' },
+            { id: 16, email: 'user16@example.com', mobile: '1111111111', name: 'Peter Wilson', domain: 'DATA_SCIENCE' },
+            { id: 17, email: 'user17@example.com', mobile: '1010101010', name: 'Quinn Johnson', domain: 'COMPUTER_GRAPHICS' },
+            { id: 18, email: 'user18@example.com', mobile: '2020202020', name: 'Rachel Davis', domain: 'COMPUTER_GRAPHICS' }
+        ];
+
+        function fetchProjectDetails() {
+            var projectNameInput = document.getElementById('projectNameInput').value.trim();
+            var project = projectsData.find(project => project.projectName.toUpperCase() === projectNameInput.toUpperCase());
+            displayProjectDetails(project);
+        }
+
+        function displayProjectDetails(project) {
+    var projectDetailsDiv = document.getElementById('projectDetails');
+    projectDetailsDiv.innerHTML = ''; // Clear previous project details
+
+    if (project) {
+        var projectCard = document.createElement('div');
+        projectCard.classList.add('col-sm-12');
+
+        var card = `
+            <div class="card">
+                <div class="card-header bg-info text-white">${project.projectName}</div>
+                <div class="card-body">
+                    <p class="card-text">Domain: ${project.domain}</p>
+                    <p class="card-text">Difficulty Level: ${project.difficultyLevel}</p>
+                    <p class="card-text">Users with the Same Domain:</p>
+                    <ul>
+                        ${usersData.filter(user => user.domain === project.domain).map(user => `
+                            <li>${user.name} <button class="btn btn-primary btn-sm ms-2" onclick="sendRequest()">Send Request</button></li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
+        projectCard.innerHTML = card;
+
+        projectDetailsDiv.appendChild(projectCard);
+    } else {
+        var errorMessage = document.createElement('div');
+        errorMessage.classList.add('col-sm-12', 'text-danger', 'mt-3');
+        errorMessage.innerText = 'Project not found!';
+        projectDetailsDiv.appendChild(errorMessage);
+    }
+}
+
+function sendRequest() {
+    var requestMessage = document.createElement('div');
+    requestMessage.classList.add('alert', 'alert-success', 'mt-2');
+    requestMessage.innerText = 'Request Sent';
+    document.getElementById('projectDetails').appendChild(requestMessage);
+}
+
+    </script>
+</body>
+</html>

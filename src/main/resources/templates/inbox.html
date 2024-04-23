@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inbox</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Start Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">User Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <th:block th:if="${user==null}">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="signin">Login</a></li>
+                    </th:block>
+                    <th:block th:if="${user!=null}">
+                        <li class="nav-item"><a class="nav-link" href="/user/profile">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projectdetails">Project Details</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/inbox">Inbox</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+   <!-- Inbox Page Section -->
+
+<!-- Inbox Page Section -->
+<section class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title text-center">Requests Received</h2>
+        </div>
+        <div class="card-body">
+            <div th:each="request : ${requests}">
+                <!-- Check if the request is intended for the current user -->
+                <div th:if="${request.req_receiver == user.email}" class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Sender Name:</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-plaintext" th:text="${request.req_sender}" id="senderName"></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <form th:action="@{/inbox/acceptRequest}" method="post">
+                            <input type="hidden" name="reqSender" th:value="${request.req_sender}">
+                            <input type="hidden" name="reqReceiver" th:value="${user.email}">
+                            <input type="hidden" name="requestId" th:value="${request.id}">
+                            <button type="submit" class="btn btn-success">Accept</button>
+                        </form>
+                        <form th:action="@{/inbox/rejectRequest}" method="post">
+                            <input type="hidden" name="reqSender" th:value="${request.req_sender}">
+                            <input type="hidden" name="reqReceiver" th:value="${user.email}">
+                            <input type="hidden" name="requestId" th:value="${request.id}">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Inbox Page Section -->
+<section class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title text-center">Accepted Friends</h2>
+        </div>
+        <div class="card-body">
+            <div th:each="acceptedFriend : ${acceptedFriends}">
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Friend Name:</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-plaintext" th:text="${acceptedFriend.friend}"></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <!-- Add a button to view profile -->
+                        <form th:action="@{/viewprofile}" method="get">
+                            <input type="hidden" name="friendEmail" th:value="${acceptedFriend.friend}">
+                            <button type="submit" class="btn btn-primary">View Profile</button>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    var friends = []; // Array to store accepted senders
+</script>
+
+<script>
+    function removeSenderName() {
+        var senderNameElement = document.getElementById("senderName");
+        var senderName = senderNameElement.textContent.trim();
+        senderNameElement.parentNode.parentNode.remove(); // Remove the sender's row from the list
+        // Add senderName to friends list if accept is clicked
+        var acceptButton = event.target;
+        if (acceptButton.classList.contains('btn-success')) {
+            // Add senderName to the friends list
+            friends.push(senderName);
+        }
+    }
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

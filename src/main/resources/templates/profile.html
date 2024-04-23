@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Start Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">User Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <th:block th:if="${user==null}">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="signin">Login</a></li>
+                    </th:block>
+                    <th:block th:if="${user!=null}">
+                        <li class="nav-item"><a class="nav-link" href="/user/profile">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projectdetails">Project Details</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/inbox">Inbox</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+
+   <!-- Profile Page Section -->
+<section class="container mt-4" th:if="${user != null}">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title text-center">Profile Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Name:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext" th:text="${user.name}"></p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Email:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext" th:text="${user.email}"></p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Mobile Number:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext" th:text="${user.mobileNo}"></p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="col-sm-3 col-form-label">Domain:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext" th:text="${user.domainName}"></p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

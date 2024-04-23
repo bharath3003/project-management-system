@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Start Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">User Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <th:block th:if="${user==null}">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="register">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="signin">Login</a></li>
+                    </th:block>
+                    <th:block th:if="${user!=null}">
+                        <li class="nav-item"><a class="nav-link" href="/user/profile">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projects">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/projectdetails">Project Details</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/inbox">Inbox</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <!-- Challenges Section -->
+<section class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2 class="card-title text-center">Challenges</h2>
+        </div>
+        <div class="card-body">
+            <div id="challengeList" class="row">
+                <!-- Challenges will be displayed here -->
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- Projects Section -->
+    <section class="container mt-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title text-center">Projects</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+                        <label for="domainInput" class="form-label">Enter Domain Name:</label>
+                        <input type="text" class="form-control" id="domainInput" placeholder="Enter domain name">
+                        <button class="btn btn-primary mt-2" onclick="fetchProjects()">Search Projects</button>
+                    </div>
+                </div>
+                <div id="projectList" class="row"></div> <!-- Projects will be displayed here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript for fetching and displaying projects -->
+    <script>
+        var projectsData = [
+            { projectName: 'ML Project 1', domain: 'MACHINE_LEARNING', difficultyLevel: 'EASY' },
+            { projectName: 'ML Project 2', domain: 'MACHINE_LEARNING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'ML Project 3', domain: 'MACHINE_LEARNING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'ML Project 4', domain: 'MACHINE_LEARNING', difficultyLevel: 'HARD' },
+            { projectName: 'ML Project 5', domain: 'MACHINE_LEARNING', difficultyLevel: 'HARD' },
+
+            { projectName: 'Security Project 1', domain: 'CYBERSECURITY', difficultyLevel: 'EASY' },
+            { projectName: 'Security Project 2', domain: 'CYBERSECURITY', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Security Project 3', domain: 'CYBERSECURITY', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Security Project 4', domain: 'CYBERSECURITY', difficultyLevel: 'HARD' },
+            { projectName: 'Security Project 5', domain: 'CYBERSECURITY', difficultyLevel: 'HARD' },
+
+            { projectName: 'Cloud Project 1', domain: 'CLOUD_COMPUTING', difficultyLevel: 'EASY' },
+            { projectName: 'Cloud Project 2', domain: 'CLOUD_COMPUTING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Cloud Project 3', domain: 'CLOUD_COMPUTING', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Cloud Project 4', domain: 'CLOUD_COMPUTING', difficultyLevel: 'HARD' },
+            { projectName: 'Cloud Project 5', domain: 'CLOUD_COMPUTING', difficultyLevel: 'HARD' },
+
+            { projectName: 'Blockchain Project 1', domain: 'BLOCKCHAIN', difficultyLevel: 'EASY' },
+            { projectName: 'Blockchain Project 2', domain: 'BLOCKCHAIN', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Blockchain Project 3', domain: 'BLOCKCHAIN', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Blockchain Project 4', domain: 'BLOCKCHAIN', difficultyLevel: 'HARD' },
+            { projectName: 'Blockchain Project 5', domain: 'BLOCKCHAIN', difficultyLevel: 'HARD' },
+
+            { projectName: 'IoT Project 1', domain: 'IOT', difficultyLevel: 'EASY' },
+            { projectName: 'IoT Project 2', domain: 'IOT', difficultyLevel: 'MEDIUM' },
+            { projectName: 'IoT Project 3', domain: 'IOT', difficultyLevel: 'MEDIUM' },
+            { projectName: 'IoT Project 4', domain: 'IOT', difficultyLevel: 'HARD' },
+            { projectName: 'IoT Project 5', domain: 'IOT', difficultyLevel: 'HARD' },
+
+            { projectName: 'Robotics Project 1', domain: 'ROBOTICS', difficultyLevel: 'EASY' },
+            { projectName: 'Robotics Project 2', domain: 'ROBOTICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Robotics Project 3', domain: 'ROBOTICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Robotics Project 4', domain: 'ROBOTICS', difficultyLevel: 'HARD' },
+            { projectName: 'Robotics Project 5', domain: 'ROBOTICS', difficultyLevel: 'HARD' },
+
+            { projectName: 'AI Project 1', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'EASY' },
+            { projectName: 'AI Project 2', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'AI Project 3', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'AI Project 4', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'HARD' },
+            { projectName: 'AI Project 5', domain: 'ARTIFICIAL_INTELLIGENCE', difficultyLevel: 'HARD' },
+
+            { projectName: 'Data Science Project 1', domain: 'DATA_SCIENCE', difficultyLevel: 'EASY' },
+            { projectName: 'Data Science Project 2', domain: 'DATA_SCIENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Data Science Project 3', domain: 'DATA_SCIENCE', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Data Science Project 4', domain: 'DATA_SCIENCE', difficultyLevel: 'HARD' },
+            { projectName: 'Data Science Project 5', domain: 'DATA_SCIENCE', difficultyLevel: 'HARD' },
+
+            { projectName: 'Computer Graphics Project 1', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'EASY' },
+            { projectName: 'Computer Graphics Project 2', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Computer Graphics Project 3', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'MEDIUM' },
+            { projectName: 'Computer Graphics Project 4', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'HARD' },
+            { projectName: 'Computer Graphics Project 5', domain: 'COMPUTER_GRAPHICS', difficultyLevel: 'HARD' }
+        ];
+
+        function fetchProjects() {
+            var domainInput = document.getElementById('domainInput').value.trim().toUpperCase();
+            var filteredProjects = projectsData.filter(project => project.domain === domainInput);
+            displayProjects(filteredProjects);
+        }
+        function displayChallenges() {
+    var challengeListDiv = document.getElementById('challengeList');
+    challengeListDiv.innerHTML = ''; // Clear previous challenges
+
+    // Group projects by domain
+    var projectsByDomain = projectsData.reduce((acc, project) => {
+        if (!acc[project.domain]) {
+            acc[project.domain] = [];
+        }
+        acc[project.domain].push(project);
+        return acc;
+    }, {});
+
+    // Get the hardest project for each domain
+    Object.entries(projectsByDomain).forEach(([domain, projects]) => {
+        var hardestProject = projects.find(project => project.difficultyLevel === 'HARD');
+
+        if (hardestProject) {
+            var challengeCard = document.createElement('div');
+            challengeCard.classList.add('col-sm-4', 'mb-3');
+
+            var card = `
+                <div class="card">
+                    <div class="card-header bg-danger text-white">${domain}</div>
+                    <div class="card-body">
+                        <p class="card-text">${hardestProject.projectName}</p>
+                        <p class="card-text">Difficulty Level: ${hardestProject.difficultyLevel}</p>
+                    </div>
+                </div>
+            `;
+            challengeCard.innerHTML = card;
+
+            challengeListDiv.appendChild(challengeCard);
+        }
+    });
+}
+
+// Call the displayChallenges function to populate the challenges panel
+displayChallenges();
+
+        function displayProjects(projects) {
+            var projectListDiv = document.getElementById('projectList');
+            projectListDiv.innerHTML = ''; // Clear previous projects
+
+            projects.forEach(project => {
+                var projectCard = document.createElement('div');
+                projectCard.classList.add('col-sm-4', 'mb-3');
+
+                var card = `
+                    <div class="card">
+                        <div class="card-header bg-info text-white">${project.projectName}</div>
+                        <div class="card-body">
+                            <p class="card-text">Domain: ${project.domain}</p>
+                            <p class="card-text">Difficulty Level: ${project.difficultyLevel}</p>
+                        </div>
+                    </div>
+                `;
+                projectCard.innerHTML = card;
+
+                projectListDiv.appendChild(projectCard);
+            });
+        }
+    </script>
+</body>
+</html>
